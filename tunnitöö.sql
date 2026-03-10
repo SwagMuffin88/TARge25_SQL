@@ -82,3 +82,61 @@ select count(*), sum(age), Person.city from Person where gender_id = 2 group by 
 
 select Person.gender_id, sum(age) as TotalAge, count(id) as TotalPersons
 from Person where age > 41 group by Person.city, gender_id;
+
+-- **********************************
+
+create table Employees();
+create table Departments();
+
+alter table Departments add id int primary key;
+alter table Departments add name nchar(50);
+alter table Departments add location nchar(50);
+alter table Departments add department_head nchar(50);
+
+alter table Employees
+    add id int,
+    add name nchar(50),
+    add gender nchar(30),
+    add salary float,
+    add department_id int;
+
+select * from Employees;
+
+insert into Departments
+values (1, null, 'London', null),
+       (2, null, 'New York', null),
+       (3, null, 'Sydney', null);
+
+insert into Departments
+values (4, 'Payroll', 'Delhi', 'Christie');
+
+update Departments set name = 'IT' where id = 1;
+update Departments set name = 'HR' where id = 2;
+update Departments set name = 'Other' where id = 3;
+
+update Departments set department_head = 'Rick' where id = 1;
+update Departments set department_head = 'Ron' where id = 2;
+update Departments set department_head = 'Cinderella' where id = 3;
+
+insert into Employees
+values
+        (1,'Tom', 'Male', 4000, 1), -- London
+       (2, 'Pam', 'Female', 3000, 2), -- NY
+       (3, 'John', 'Male', 3500, 1), -- London
+       (4, 'Sam', 'Male', 4500, 1), -- London
+       (5, 'Todd', 'Male', 2800, 3), -- Sydney
+       (6, 'Ben', 'Male', 7000, 2), -- NY
+       (7, 'Sara', 'Female', 4800, 3), -- Sydney
+       (8, 'Valarie', 'Female', 5500, 2), -- NY
+       (9, 'James', 'Male', 6500, 1),  -- London
+       (10, 'Russell', 'Male', 8800, 1); -- London
+
+select Employees.name, gender, salary, Departments.name
+from Employees
+    left join Departments
+on Employees.department_id = Departments.id;
+
+select sum(employees.salary) as total_salaries from Employees;
+
+select min(Employees.salary), Employees.name from Employees
+group by Employees.name fetch first 1 row only;
