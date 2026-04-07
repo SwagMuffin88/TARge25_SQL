@@ -271,3 +271,46 @@ alter table Employees add manager_id int;
 --     from Employees as e
 --     inner join Employees m
 --     on e.manager_id = m.id;
+
+select * from Employees;
+
+
+-- Protseduurid on mõeldud peamiselt andmete muutmiseks (INSERT, UPDATE, DELETE)
+--  või tehingute (TRANSACTION) haldamiseks.
+-- https://www.postgresql.org/docs/current/sql-createprocedure.html
+-- create procedure spGetNameById(i int) LANGUAGE plpgsql
+-- as $$
+-- begin
+--     select e.name from Employees as e where id = (i);
+-- end;
+-- $$;
+--
+-- drop procedure spGetNameById(i int);
+--
+-- call spGetNameById(2);
+
+CREATE OR REPLACE FUNCTION fn_get_name_by_id(e_id INT)
+returns text
+language plpgsql
+as $$
+declare
+    e_name TEXT;
+begin
+    select name into e_name
+
+    from Employees as e
+    where id = e_id;
+
+    return e_name;
+end;
+$$;
+
+SELECT fn_get_name_by_id(2);
+
+-- string built-in functions
+-- https://www.postgresql.org/docs/current/functions-string.html
+select rtrim('H  e  l  l  o  ');
+select reverse(upper(ltrim(' world   ! ')));
+
+-- Alates '@' märgist järgmised kolm tähte
+select substring('hello@world.com', position('@' in 'hello@world.com') + 1, 3);
