@@ -31,15 +31,15 @@ VALUES
     (3, 'Kalle', 'Kuusk', 'Mees', 2100, 'Pärnu', 'Sales'),
     (4, 'Tiina', 'Mänd', 'Naine', 3200, 'Tallinn', 'IT');
 
-create trigger trEmployeeForInsert
-    on Employees_
-    for insert
-    as begin
-    declare @Id int
-    select @Id = Id from inserted
-        insert into EmployeeAudit
-        values ('New employee with Id = ' + cast(@Id as nvarchar)
-               + 'is added at ' + cast(getdate() as nvarchar) )
-end;
+-- create trigger trEmployeeForInsert
+--     on Employees_
+--     for insert
+--     as begin
+--     declare @Id int
+--     select @Id = Id from inserted
+--         insert into EmployeeAudit
+--         values ('New employee with Id = ' + cast(@Id as nvarchar)
+--                + 'is added at ' + cast(getdate() as nvarchar) )
+-- end;
 
 select * from EmployeeAudit;
