@@ -70,6 +70,9 @@ insert into ##TestTempTable values
                                 (103, 'Pam', 'Female'),
                                 (104, 'James', 'Male');
 
+drop table Product;
+drop table ProductSales;
+
 -- Kas saab luua view'd ajutisest tabelist?
 -- --- Why Doesn't SQL Server Allow Views on Temporary Tables? ----
 -- Persistence: Temporary tables are created and dropped automatically during the session.

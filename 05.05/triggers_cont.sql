@@ -209,3 +209,62 @@ end
 update vEmployeeDetails set FirstName = 'Johnny' where id = 1;
 update vEmployeeDetails set Gender = 'Male' where id = 1;
 -- update vEmployeeDetails set DepartmentId = 3 where id = 1; -- DepartmentId was not added to the view
+
+-- View, mis kasutab join ja tabelid on Employee ja Department
+--selectis kasutame veerge DeptId, DeptName ja siis loendab ridade arvu tabelis
+--lõpus grupeerib ära DeptName ja DeptId järgi
+
+create view vEmployeeCount
+as
+select DepartmentId, City, DepartmentName, count(*) as TotalEmployees
+from Employees as e
+join Department as d
+on e.DepartmentId = d.Id
+group by DepartmentName, DepartmentId, City
+
+select * from vEmployeeCount
+
+--näitab ära osakonnad, kus on töötajaid 2 või rohkem
+select DepartmentName, TotalEmployees from vEmployeeCount
+where TotalEmployees >= 2
+
+-- Kasutame temp. tabelit
+select DepartmentName, DepartmentId, count(*) as TotalEmployees
+into #TempEmployeeCount
+from Employees as e
+join Department as d
+on e.DepartmentId = d.Id
+group by DepartmentName, DepartmentId
+
+select * from #TempEmployeeCount
+
+-- Proovime info saada temp tabelist ja kus >= 2 töötajaga osakond
+select DepartmentName, TotalEmployees
+from #TempEmployeeCount
+where TotalEmployees >= 2
+
+-- NB! Kui kustutame InsteadofDelete triggeri vEmployeeDetailsi alt siis saab veateate läbi samal ajal
+-- view kustutamise
+create trigger trEmployeeDetails_InsteadOfDelete
+on vEmployeeDetails
+instead of delete
+as begin
+    delete e
+    from Employees as e
+    join deleted
+    on e.Id = deleted.Id
+end
+
+delete from vEmployeeDetails where Id = 3
+
+-- drop view vEmployeeCount;
+-- drop view vEmployeesDataExceptSalary;
+-- drop view vITEmployeesInDepartment;
+-- drop view vProductSalesCalculated;
+drop view vEmployeeDetails;
+
+drop table _Employees;
+drop table EmployeeFirstName;
+drop table Employees;
+drop table Employees_;
+drop table EmployeeAudit;
