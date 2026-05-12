@@ -3,6 +3,8 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/05.05/common_table_expression.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/05.05/triggers_cont.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/12.05/cte_cont.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/12.05/pivot.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/21.04/indexes.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/21.04/temp_tables.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/28.04/index_cont.sql" dialect="TSQL" />
