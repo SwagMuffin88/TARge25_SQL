@@ -1,5 +1,6 @@
 -- Transaction on käskluste kogum, mida täidetakse korraga ühtse tööüksusena.
 -- See kontrollib vigu - kui on viga, siis see taastab andmebaasi algse oleku (mis on vahetult enne tehingut).
+-- Prepared SQL code that can be reused
 
 create table MailingAddress (
     Id int primary key not null,
@@ -41,15 +42,15 @@ as begin
         rollback transaction
     end catch
 end
+go
 ----
-
 spUpdateAddress
 
 select * from MailingAddress
 select * from PhysicalAddress
 
 -- Kasutame sama SP-d, aga muudame sisu:
-create procedure spUpdateAddressNew
+create procedure spUpdateAddressNew()
 as begin
     begin try
         begin transaction
@@ -64,15 +65,17 @@ as begin
         rollback transaction
     end catch
 end
+go
 ----
 spUpdateAddressNew
 
-select * from MailingAddress
-select * from PhysicalAddress
+select * from MailingAddress;
+select * from PhysicalAddress;
 
 ------
 truncate table MailingAddress; -- Tühjendab tabeli
 truncate table PhysicalAddress;
+drop procedure spUpdateAddress;
 
     -- Kui teine uuendus ei lähe läbi, ei lähe ka esimene.
 

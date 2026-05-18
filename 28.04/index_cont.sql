@@ -12,6 +12,7 @@
 -- Kui soovid ainult 5 rea tagasilükkamist ja ülejäänud 5 rea sisestamist, siis selleks tuleb kasutada IGNORE_DUP_KEY.
 
 
+
     create table EmployeeFirstName(
         Id int primary key,
         FirstName nvarchar(30),

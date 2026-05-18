@@ -1,5 +1,9 @@
 -- VIEW ei salvesta andmeid vaikimisi
--- See on nagu salvestatud virtuaalne tabel
+-- See on salvestatud virtuaalne tabel
+
+    -- Virtual table based on the result set of an SQL statement.
+    -- The fields are from one or more real tables in the DB.
+    -- They are not real tables, but can be interacted with as if they were.
 
 --Milleks vaja:
 -- Saab kasutada andmebaasi skeemi keesukuse lihtsustamiseks, mitte IT-inimesele piiratud ligipääs andmetele.
