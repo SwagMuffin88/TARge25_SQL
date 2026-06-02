@@ -42,7 +42,7 @@ WITH
 
 select user_name();
 
--- Inline funktsioon, mis tagastab kõik kliendid.
+-- 1. Inline funktsioon, mis tagastab kõik kliendid.
 -- Tabel: SalesLT.Customer
 use AdventureWorksLT2019;
 
@@ -52,7 +52,7 @@ return (select * from SalesLT.Customer);
 
 select * from GetAllCustomers_ITVF();
 
--- Funktsioon, mis võtab @CustomerID ja tagastab:
+-- 2. Funktsioon, mis võtab @CustomerID ja tagastab:
 -- FirstName
 -- LastName
 create function GetCustomerByID_ITVF(@CustomerID int)
@@ -63,7 +63,7 @@ return (select FirstName, LastName from SalesLT.Customer
 
 select * from GetCustomerByID_ITVF(1);
 
--- Funktsioon, mis võtab @CustomerID ja tagastab kõik selle kliendi tellimused
+-- 3. Funktsioon, mis võtab @CustomerID ja tagastab kõik selle kliendi tellimused
 -- Tabel: SalesLT.SalesOrderHeader
 create function GetOrdersByCustomer_ITVF(@CustomerID int)
 returns table as
@@ -72,7 +72,7 @@ return (select * from SalesLT.SalesOrderHeader
 
 select * from GetOrdersByCustomer_ITVF(29736);
 
--- Funktsioon, mis võtab @MinPrice, @MaxPrice ja tagastab tooted hinnavahemikus
+-- 4. Funktsioon, mis võtab @MinPrice, @MaxPrice ja tagastab tooted hinnavahemikus
 -- Tabel: SalesLT.Product
 create function GetProductsByPrice_ITVF(@MinPrice money, @MaxPrice money)
 returns table as
@@ -81,9 +81,68 @@ returns table as
 
 select * from GetProductsByPrice_ITVF(1000, 2000);
 
--- Funktsioon, mis tagastab TOP 10 kõige kallimat toodet
+-- 5. Funktsioon, mis tagastab TOP 10 kõige kallimat toodet
 create function GetTopExpensiveProducts_ITVF()
 returns table as
 return(select top 10 * from SalesLT.Product order by ListPrice desc);
 
 select * from GetTopExpensiveProducts_ITVF();
+
+-- 6. Funktsioon, mis võtab @CustomerID ja tagastab tabeli, kus on:
+-- nimi (First + Last kokku)
+-- email
+-- telefon
+-- Tabel: SalesLT.Customer
+-- Kasuta @Result TABLE
+
+create function GetCustomerFullInfo_MSTVF()
+returns @Result table(Name nvarchar(100), EmailAddress nvarchar(50), Phone phone)
+as begin
+    insert into @Result
+    select FirstName + ' ' + LastName AS Name,
+           EmailAddress, Phone
+    from SalesLT.Customer
+    return;
+end
+
+select * from GetCustomerFullInfo_MSTVF();
+
+-- 7. Funktsioon, mis võtab @CustomerID ja tagastab:
+-- tellimuste arv
+-- kogusumma
+
+-- Tabel: SalesLT.SalesOrderHeader
+create function GetCustomerOrderSummary_MSTVF(@CustomerId int)
+returns @Result table(NrOfOrders int, TotalPrice money)
+as begin
+    insert into @Result
+    select count(SalesOrderID),
+           sum(TotalDue)
+    from SalesLT.SalesOrderHeader
+    where CustomerID = @CustomerId
+return
+end
+
+select * from GetCustomerOrderSummary_MSTVF(29736);
+
+-- 8. Funktsioon, mis tagastab kõik tooted + hinnaklass:
+-- "Odav", "Keskmine", "Kallis"
+-- Tabel: SalesLT.Product
+create function GetProductPriceCategory_MSTVF()
+returns @Result table (Id int, ProductName nvarchar(100), ListPrice money, PriceRange nvarchar(10))
+as begin
+    insert into @Result
+    select ProductId, Name, ListPrice,
+           -- Hinnaklassi määramine:
+        CASE
+            WHEN ListPrice < 800 THEN 'LowEnd'
+            WHEN ListPrice >= 800 AND ListPrice <= 2000 THEN 'Middle'
+            WHEN ListPrice > 2000 THEN 'HighEnd'
+            ELSE 'Unknown' -- Juhuks, kui hind peaks olema NULL või puudu
+        END AS PriceRange
+    from SalesLT.Product
+    return
+end
+
+
+select * from GetProductPriceCategory_MSTVF();
