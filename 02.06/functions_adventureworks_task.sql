@@ -119,3 +119,40 @@ end
 
 
 select * from GetProductPriceCategory_MSTVF();
+
+-- 9. Funktsioon, mis tagastab ainult need kliendid, kellel on vähemalt 1 tellimus
+-- Tabelid: SalesLT.Customer, SalesLT.SalesOrderHeader
+create function GetCustomersWithOrders_MSTVF()
+returns @Result table(
+    CustomerID INT,
+    FirstName NVARCHAR(50),
+    LastName NVARCHAR(50),
+    CompanyName NVARCHAR(128),
+    EmailAddress NVARCHAR(50)
+)
+as begin
+    insert into @Result(CustomerID, FirstName, LastName, CompanyName, EmailAddress)
+    select CustomerID, FirstName, LastName, CompanyName, EmailAddress
+    from SalesLT.Customer
+    where
+        CustomerID in (select CustomerID from SalesLT.SalesOrderHeader)
+    return
+end
+
+select * from GetCustomersWithOrders_MSTVF();
+
+-- 10. Funktsioon, mis tagastab TOP 5 klienti koos nimega, kogukuluga
+create function GetTopCustomersBySpending_MSTVF()
+returns table as
+return (
+    select top 5 * from (
+        SELECT c.CustomerID,
+                c.FirstName,
+                c.LastName,
+                c.CompanyName,
+                sum(o.TotalDue) as TotalSpend
+         from GetCustomersWithOrders_MSTVF() c
+                  inner join SalesLT.SalesOrderHeader o on c.CustomerID = o.CustomerId
+         group by c.CustomerID, c.FirstName, c.LastName, c.CompanyName) as co order by TotalSpend desc)
+
+select * from dbo.GetTopCustomersBySpending_MSTVF();
